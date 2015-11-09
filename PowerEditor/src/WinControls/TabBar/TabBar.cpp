@@ -813,16 +813,30 @@ void TabBarPlus::drawItem(DRAWITEMSTRUCT *pDrawItemStruct)
 
 		int marge = spaceUnit;
 
+		// The classic FooBar. ;)
+		HIMAGELIST hSysImgList;
+
+		// Get the file icon.
+		SHFILEINFO FileInfo = { 0 };
+		hSysImgList = (HIMAGELIST) SHGetFileInfo(tci.pszText,
+			FILE_ATTRIBUTE_NORMAL,
+			&FileInfo,
+			sizeof(FileInfo),
+			SHGFI_USEFILEATTRIBUTES | SHGFI_ICON);
+
+		HIMAGELIST myImageList = ImageList_Create(16, 16, ILC_MASK, 1, 0);;
+		ImageList_AddIcon(myImageList, FileInfo.hIcon);
+		
 		if (_isVertical)
 		{
 			rect.bottom -= imageRect.bottom - imageRect.top;
-			ImageList_Draw(hImgLst, tci.iImage, hDC, xPos, rect.bottom - marge, isSelected?ILD_TRANSPARENT:ILD_SELECTED);
+			ImageList_Draw(myImageList, 0, hDC, xPos, rect.bottom - marge, isSelected?ILD_TRANSPARENT:ILD_SELECTED);
 			rect.bottom += marge;
 		}
 		else
 		{
 			rect.left += marge;
-			ImageList_Draw(hImgLst, tci.iImage, hDC, rect.left, yPos, isSelected?ILD_TRANSPARENT:ILD_SELECTED);
+			ImageList_Draw(myImageList, 0, hDC, rect.left, yPos, isSelected?ILD_TRANSPARENT:ILD_SELECTED);
 			rect.left += imageRect.right - imageRect.left;
 		}
 	}
